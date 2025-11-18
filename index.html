@@ -1,0 +1,877 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brawl Stars - Guia Completo</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #dcdc05;	
+      color: rgb(255, 255, 255);
+      text-size-adjust: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      border-right: 2px solid #222;
+    }
+
+
+    #titule{
+
+        text-size-adjust: 50px;
+        color: #480707
+;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #f7d300;
+    }
+
+    .sidebar input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .menu-item {
+      padding: 10px;
+      width: 100%;
+      background: #222;
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      text-align: left;
+      transition: 0.2s;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: #f7d300;
+      color: black;
+    }
+
+    .exit-btn {
+      background: #b30000;
+      padding: 10px;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .content {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .brawler-card {
+      background: #1a1a1a;
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+
+    .modal-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box {
+      background: #222;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .stay { background: #0a7c0a; color: #fff; }
+    .exit { background: #b30000; color: #fff; }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2>Pesquisas</h2>
+
+    <button class="exit-btn" onclick="openExitModal()">Sair</button>
+
+    <input id="search" placeholder="Pesquisar..." oninput="filterMenu()" />
+
+    <div id="menu"></div>
+
+    <div class="footer">Suporte direto à Supercell</div>
+  </div>
+
+  <div class="content">
+    <h1 id="titule">Brawl Stars — Guia Completo</h1>
+    <h2 id="titleArea"></h2>
+    <div id="contentArea"></div>
+
+    <div class="footer">
+      Feito com ❤️ para fãs de Brawl Stars <br>
+      <a href="https://supercell.com/en/support/" target="_blank">Suporte Supercell</a>
+    </div>
+  </div>
+
+  <div id="exitModal" class="modal-bg" style="display:none;">
+    <div class="modal-box">
+      <h3>Tem certeza que quer sair?</h3>
+      <p>Sua sessão será encerrada.</p>
+      <div class="modal-buttons">
+        <button class="stay" onclick="closeExitModal()">Ficar</button>
+        <button class="exit" onclick="leaveSite()">Sair</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const MENU_ITEMS = [
+    "Como se joga?",
+    "Explicações (como fazer coisas no jogo)",
+    "Suporte",
+    "Compras",
+    "Recompensas",
+    "Novidades",
+    "Eventos no jogo",
+    "Parceria nova",
+    "Quais brawlers estão atualmente no jogo?",
+    "Como jogar com cada brawler",
+    "Quais são melhores para o meta?",
+    "Melhorar jogando com amigos / estratégias",
+    "Como o jogo se tornou famoso",
+    "Como o jogo foi planejado"
+  ];
+
+  const BRAWLERS = [
+    { name: "Shelly", role: "Fighter", desc: "Shotgun forte de curta distância." },
+    { name: "Colt", role: "Sharpshooter", desc: "Preciso e forte à distância." },
+    { name: "Nita", role: "Fighter", desc: "Controle com seu urso." },
+    { name: "Spike", role: "Sharpshooter", desc: "Dano alto com espinhos." },
+    { name: "Crow", role: "Assassin", desc: "Ágil e venenoso." }
+  ];
+
+  const menuDiv = document.getElementById("menu");
+  const titleArea = document.getElementById("titleArea");
+  const contentArea = document.getElementById("contentArea");
+
+  function loadMenu() {
+    MENU_ITEMS.forEach(item => {
+      const btn = document.createElement("button");
+      btn.className = "menu-item";
+      btn.textContent = item;
+      btn.onclick = () => selectMenu(item, btn);
+      menuDiv.appendChild(btn);
+    });
+  }
+
+  function filterMenu() {
+    const search = document.getElementById("search").value.toLowerCase();
+    const items = document.querySelectorAll(".menu-item");
+
+    items.forEach(btn => {
+      btn.style.display = btn.textContent.toLowerCase().includes(search)
+        ? "block" : "none";
+    });
+  }
+
+function selectMenu(title, btn) {
+    document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    titleArea.textContent = title;
+
+    switch (title) {
+
+        case "Quais brawlers estão atualmente no jogo?":
+            contentArea.innerHTML = BRAWLERS.map(b => `
+              <div class='brawler-card'>
+                <h3>${b.name}</h3>
+                <p>${b.role}</p>
+                <small>${b.desc}</small>
+              </div>
+            `).join('');
+        break;
+case "Como se joga?":
+    contentArea.innerHTML = `
+        <h2>Como se joga?</h2>
+
+        <p>
+            Brawl Stars é um jogo de ação rápido em que você controla um personagem chamado 
+            <strong>Brawler</strong>. Cada Brawler tem ataques, Supers e habilidades únicas,
+            o que faz cada um ter um estilo próprio de jogabilidade.
+        </p>
+
+        <h3>🎮 Controles básicos</h3>
+        <p>
+            • Use o <strong>botão de movimentação</strong> para andar pelo mapa.<br>
+            • Use o <strong>botão de ataque</strong> para atirar, socar ou ativar golpes especiais.<br>
+            • Arraste o botão de ataque para <strong>mirar manualmente</strong> (mais preciso).<br>
+            • Toque rapidamente para um <strong>tiro automático</strong> no inimigo mais próximo.<br>
+        </p>
+
+        <h3>💥 O Super</h3>
+        <p>
+            À medida que você acerta inimigos, seu medidor de Super carrega.  
+            Quando estiver cheio, você pode usar o botão amarelo para ativar um poder muito mais forte,
+            como pular, explodir, curar, empurrar ou dar muito dano.  
+        </p>
+
+        <h3>🔧 Acessórios (Gadgets)</h3>
+        <p>
+            São habilidades especiais extras que você pode usar algumas vezes por partida.  
+            Elas ficam no botão verde e variam de acordo com o Brawler.
+        </p>
+
+        <h3>⭐ Poderes de Estrela (Star Powers)</h3>
+        <p>
+            São habilidades passivas que tornam seu Brawler mais forte.  
+            Eles são desbloqueados quando o Brawler chega ao nível 9.
+        </p>
+
+        <h3>🗺️ Modos de jogo</h3>
+        <p>Existem vários modos diferentes, cada um com objetivo próprio:</p>
+
+        <ul>
+            <li><strong>Pique-Gema</strong>: segure 10 gemas até o final.</li>
+            <li><strong>Fute-Brawl</strong>: marque gols no time adversário.</li>
+            <li><strong>Roubo</strong>: destrua o cofre inimigo.</li>
+            <li><strong>Caçadores</strong>: faça pontos derrotando inimigos.</li>
+            <li><strong>Combate</strong>: sobreviva até ser o último no mapa (solo ou dupla).</li>
+            <li><strong>Zona Estratégica</strong>: controle áreas do mapa para ganhar pontos.</li>
+        </ul>
+
+        <h3>🛡️ Dicas para jogar melhor</h3>
+        <p>
+            • Use as paredes para se proteger.<br>
+            • Aprenda o alcance do seu Brawler.<br>
+            • Não lute sozinho contra dois inimigos.<br>
+            • Trabalhe em equipe sempre que possível.<br>
+            • Use a mira manual quando precisar de precisão.<br>
+        </p>
+
+        <p><strong>
+            Quanto mais você joga, mais domina o controle do seu Brawler e descobre
+            estratégias para vencer em cada modo!
+        </strong></p>
+    `;
+break;
+case "Explicações (como fazer coisas no jogo)":
+    contentArea.innerHTML = `
+        <h2>Explicações — Como fazer as coisas no Brawl Stars</h2>
+
+        <p>
+            No Brawl Stars existem várias mecânicas importantes que ajudam você a evoluir,
+            jogar melhor, desbloquear novos Brawlers e aprender tudo que o jogo oferece.
+            Aqui está um guia completo para você entender como fazer cada coisa no jogo:
+        </p>
+
+        <h3>🎮 Como atacar</h3>
+        <p>
+            • Toque no botão de tiro para usar o ataque básico.<br>
+            • Arraste o botão para <strong>mirar</strong> e ter mais precisão.<br>
+            • Toque rápido para usar o <strong>tiro automático</strong>, mirando no inimigo mais próximo.<br>
+        </p>
+
+        <h3>💥 Como usar o Super</h3>
+        <p>
+            • O Super carrega conforme você acerta inimigos.<br>
+            • Quando o botão amarelo acender, você pode ativar o Super arrastando ou tocando.<br>
+            • Cada Brawler tem um Super único: salto, cura, explosão, escudo, empurrão, etc.
+        </p>
+
+        <h3>🔧 Como usar acessórios (gadgets)</h3>
+        <p>
+            • Gadgets são habilidades extras, com usos limitados por partida.<br>
+            • Eles ficam no botão verde.<br>
+            • Cada Brawler tem 1 ou 2 gadgets diferentes para equipar.<br>
+        </p>
+
+        <h3>⭐ Como usar Poderes de Estrela (Star Powers)</h3>
+        <p>
+            • São habilidades passivas permanentes que fortalecem seu Brawler.<br>
+            • Você desbloqueia star powers quando o Brawler chega ao <strong>nível 9</strong>.<br>
+        </p>
+
+        <h3>⬆️ Como evoluir seus Brawlers</h3>
+        <p>
+            • Ganhe <strong>Pontos de Poder</strong> e Moedas.<br>
+            • Vá até o Brawler e clique em <strong>Melhorar</strong> para aumentar vida, dano e força.<br>
+        </p>
+
+        <h3>🎁 Como desbloquear novos Brawlers</h3>
+        <p>
+            Existem várias maneiras principais de desbloquear Brawlers no jogo.
+            Aqui está a explicação completa por tipo, <strong>sem incluir raridade cromática</strong>:
+        </p>
+
+        <h3>🟩 Brawlers Comuns</h3>
+        <p>
+            • Desbloqueados automaticamente ao progredir no jogo.<br>
+            • Não exigem grande quantidade de pontos ou vales.<br>
+        </p>
+
+        <h3>🟦 Brawlers Raros</h3>
+        <p>
+            • Podem ser desbloqueados em eventos, ofertas ou recompensas da temporada.<br>
+            • Requerem poucas moedas ou vales de evento quando disponíveis.<br>
+        </p>
+
+        <h3>🟪 Brawlers Super-Raros</h3>
+        <p>
+            • Aparecem em eventos especiais, na loja e como recompensas da temporada.<br>
+            • Custam uma quantidade moderada de vales ou moedas.<br>
+        </p>
+
+        <h3>🟨 Brawlers Épicos</h3>
+        <p>
+            • São mais difíceis de conseguir.<br>
+            • Podem aparecer em eventos, loja ou recompensas grandes.<br>
+            • Custam mais vales e moedas em comparação aos raros.<br>
+        </p>
+
+        <h3>🟧 Brawlers Míticos</h3>
+        <p>
+            • Geralmente aparecem em eventos maiores ou na loja com custo alto.<br>
+            • Requerem mais vales para serem desbloqueados.<br>
+        </p>
+
+        <h3>🟥 Brawlers Lendários</h3>
+        <p>
+            • São os mais difíceis de conseguir no jogo.<br>
+            • Podem aparecer na loja ou em eventos especiais por preço muito alto.<br>
+            • Também podem vir como recompensa ultra-rara em temporadas especiais.<br>
+        </p>
+
+        <h3>📌 Quantidade de vales / recursos necessários</h3>
+        <p>
+            Os custos variam conforme a temporada e eventos, mas de forma geral:<br>
+        </p>
+
+        <ul>
+            <li><strong>Comuns</strong>: custo muito baixo ou grátis.</li>
+            <li><strong>Raros</strong>: baixo custo de vales/moedas.</li>
+            <li><strong>Super-Raros</strong>: custo moderado.</li>
+            <li><strong>Épicos</strong>: alto custo.</li>
+            <li><strong>Míticos</strong>: muito alto custo.</li>
+            <li><strong>Lendários</strong>: custo extremamente alto.</li>
+        </ul>
+
+        <p>
+            Você também pode acelerar o progresso jogando eventos,
+            completando missões e participando de temporadas.
+        </p>
+
+        <h3>👥 Como jogar com amigos</h3>
+        <p>
+            • Vá até o botão de Amigos no menu principal.<br>
+            • Adicione pelo ID, link ou QR Code.<br>
+            • Crie uma equipe e escolha o modo de jogo.<br>
+        </p>
+
+        <p><strong>
+            Aprender essas mecânicas é fundamental para evoluir no Brawl Stars.
+            Quanto mais você joga, mais fácil fica dominar tudo!
+        </strong></p>
+    `;
+break;
+case "Suporte":
+    contentArea.innerHTML = `
+        <h2>Suporte do Jogo</h2>
+        <p>Se você estiver enfrentando algum problema no Brawl Stars, existem várias formas de tentar resolver antes de entrar em contato com a Supercell. Aqui estão algumas das dúvidas e soluções mais comuns:</p>
+
+        <h3>🔥 Problemas comuns e como resolver</h3>
+        <ul>
+            <li><strong>O jogo está travando ou lagando:</strong> tente limpar o cache do aplicativo, fechar apps em segundo plano e verificar sua conexão com a internet.</li>
+            <li><strong>Perdi meu progresso:</strong> verifique se sua conta Supercell ID está conectada. Caso não esteja, entre nela para recuperar tudo.</li>
+            <li><strong>Não consigo fazer compras:</strong> confirme se seu método de pagamento está atualizado e se não há restrições na loja do seu dispositivo.</li>
+            <li><strong>Recompensas não apareceram:</strong> feche e abra o jogo novamente. Se ainda não aparecer, espere alguns minutos — às vezes o servidor demora.</li>
+            <li><strong>Erro ao entrar no jogo:</strong> reinicie o aparelho e verifique se há atualização disponível.</li>
+        </ul>
+
+        <h3>📩 Quando procurar o suporte da Supercell?</h3>
+        <p>Você deve entrar em contato com o suporte oficial da Supercell quando:</p>
+        <ul>
+            <li>Você perdeu sua conta e não consegue recuperar usando o Supercell ID.</li>
+            <li>Comprou algo e NÃO recebeu dentro do jogo.</li>
+            <li>Suspeita que sua conta foi hackeada ou acessada sem permissão.</li>
+            <li>Encontrou algum bug grave que atrapalha a jogabilidade.</li>
+            <li>Tem dúvidas sobre segurança, punições ou comportamento inadequado de outros jogadores.</li>
+        </ul>
+
+        <h3>📞 Como entrar em contato com o suporte?</h3>
+        <p>No próprio jogo, vá em:</p>
+        <p><strong>Menu → Suporte e Ajuda → Fale Conosco</strong></p>
+        <p>Lá você será direcionado diretamente ao atendimento oficial da Supercell.</p>
+    `;
+break;
+case "Compras":
+    contentArea.innerHTML = `
+        <h2>Compras no Brawl Stars</h2>
+
+        <p>
+            No Brawl Stars existem diversas formas de comprar itens, recursos e conteúdos
+            para evoluir mais rápido no jogo. Todas as compras são opcionais, mas podem ajudar
+            bastante na sua progressão.
+        </p>
+
+        <h3>💎 Gemas</h3>
+        <p>
+            As Gemas são a moeda premium do jogo. Você pode usá-las para:
+            <br>– Comprar skins;
+            <br>– Acessar ofertas especiais;
+            <br>– Comprar moedas;
+            <br>– Acelerar seu progresso.
+        </p>
+
+        <h3>🪙 Moedas</h3>
+        <p>
+            As moedas são usadas para evoluir Brawlers e comprar itens na loja.
+            Também podem ser compradas com gemas.
+        </p>
+
+        <h3>🎁 Ofertas da loja</h3>
+        <p>
+            Todos os dias surgem ofertas novas com:
+            <br>– Caixas (se estiverem disponíveis);
+            <br>– Pontos de poder;
+            <br>– Skins com desconto;
+            <br>– Recursos extras.
+        </p>
+
+        <h3>⚠️ Compras que não apareceram</h3>
+        <p>
+            Caso alguma compra não apareça, aguarde alguns minutos e depois busque o suporte.
+        </p>
+    `;
+break;
+case "Recompensas":
+    contentArea.innerHTML = `
+        <h2>Recompensas no Brawl Stars</h2>
+
+        <p>
+            O jogo oferece muitas formas de ganhar recompensas gratuitamente.
+            Quanto mais você joga, mais recursos consegue coletar.
+        </p>
+
+        <h3>🎯 Missões</h3>
+        <p>
+            Faça missões diárias e semanais para ganhar:
+            <br>– Moedas;
+            <br>– Pontos de poder;
+            <br>– Progresso na temporada.
+        </p>
+
+        <h3>🏆 Trilha de Troféus</h3>
+        <p>
+            Ao subir troféus você desbloqueia recompensas únicas como:
+            <br>– Brawlers;
+            <br>– Gemas;
+            <br>– Moedas;
+            <br>– Ícones e sprays.
+        </p>
+
+        <h3>📦 Recompensas da loja grátis</h3>
+        <p>
+            Todos os dias você pode coletar itens gratuitos na loja.
+        </p>
+
+        <h3>🎉 Eventos e desafios</h3>
+        <p>
+            Eventos especiais trazem recompensas maiores, incluindo skins exclusivas.
+        </p>
+    `;
+break;
+case "Novidades":
+    contentArea.innerHTML = `
+        <h2>Novidades do Brawl Stars</h2>
+
+        <p>
+            O Brawl Stars recebe atualizações constantes com novos Brawlers, modos,
+            eventos, skins, balanceamentos e recursos inéditos.
+        </p>
+
+        <h3>🔔 Atualizações</h3>
+        <p>
+            A Supercell normalmente lança grandes atualizações a cada temporada,
+            trazendo mudanças no meta e novos conteúdos.
+        </p>
+
+        <h3>🎨 Skins e remodelagens</h3>
+        <p>
+            Sempre chegam skins novas e melhorias visuais para Brawlers mais antigos.
+        </p>
+
+        <h3>🧩 Recompensas novas e passe</h3>
+        <p>
+            Cada temporada adiciona um novo Passe, com itens exclusivos.
+        </p>
+    `;
+break;
+case "Eventos no jogo":
+    contentArea.innerHTML = `
+        <h2>Eventos no Brawl Stars</h2>
+
+        <p>
+            Eventos são modos temporários que aparecem em horários específicos
+            e trazem desafios diferentes para os jogadores.
+        </p>
+
+        <h3>🔥 Eventos especiais</h3>
+        <p>
+            – Caça-Estrelas especial<br>
+            – Eventos sazonais<br>
+            – Modos exclusivos de datas comemorativas
+        </p>
+
+        <h3>🏆 Desafios</h3>
+        <p>
+            Os desafios premiam os jogadores com skins, moedas e recompensas raras.
+        </p>
+
+        <h3>⚔️ Eventos de combate</h3>
+        <p>
+            Combate Especial, modificadores e mapas diferentes aparecem todos os dias.
+        </p>
+    `;
+break;
+case "Parceria nova":
+    contentArea.innerHTML = `
+        <h2>Novas Parcerias</h2>
+
+        <p>
+            O Brawl Stars frequentemente realiza parcerias com marcas, jogos,
+            desenhos e eventos culturais.
+        </p>
+
+        <p>
+            Essas parcerias normalmente incluem:
+            <br>– Skins temáticas;
+            <br>– Modos especiais;
+            <br>– Itens exclusivos por tempo limitado;
+            <br>– Desafios especiais relacionados à colaboração.
+        </p>
+    `;
+break;
+case "Quais brawlers estão atualmente no jogo?":
+    contentArea.innerHTML = `
+      <h2>Lista de Brawlers (atualmente no jogo)</h2>
+      <p>Existem **96 brawlers** no Brawl Stars até o momento, segundo a Wikipédia. :contentReference[oaicite:0]{index=0}</p>
+      <p>Aqui estão alguns deles (exemplos):</p>
+      <ul>
+        <li>8-Bit</li>
+        <li>Alli</li>
+        <li>Amber</li>
+        <li>Angelo</li>
+        <li>Ash</li>
+        <li>Barley</li>
+        <li>Bea</li>
+        <li>Belle</li>
+        <li>Berry</li>
+        <li>Bibi</li>
+        <li>Bo</li>
+        <li>Bonnie</li>
+        <li>Brock</li>
+        <li>Bull</li>
+        <li>Buster</li>
+        <li>Buzz</li>
+        <li>Byron</li>
+        <li>Carl</li>
+        <li>Charlie</li>
+        <li>Chester</li>
+        <li>Chuck</li>
+        <li>Clancy</li>
+        <li>Colette</li>
+        <li>Colt</li>
+        <li>Cordelius</li>
+        <li>Crow</li>
+        <li>Darryl</li>
+        <li>Doug</li>
+        <li>Draco</li>
+        <li>Dynamike</li>
+        <li>Edgar</li>
+        <li>El Primo</li>
+        <li>Emz</li>
+        <li>Eve</li>
+        <li>Fang</li>
+        <li>Finx</li>
+        <li>Frank</li>
+        <li>Gale</li>
+        <li>Gene</li>
+        <li>Gray</li>
+        <li>Griff</li>
+        <li>Grom</li>
+        <li>Gus</li>
+        <li>Hank</li>
+        <li>Jacky</li>
+        <li>Jae-yong</li>
+        <li>Janet</li>
+        <li>Jessie</li>
+        <li>Juju</li>
+        <li>Kaze</li>
+        <li>Kenji</li>
+        <li>Kit</li>
+        <li>Leon</li>
+        <li>Lily</li>
+        <li>Lola</li>
+        <li>Lou</li>
+        <li>Lumi</li>
+        <li>Maisie</li>
+        <li>Mandy</li>
+        <li>Max</li>
+        <li>Meeple</li>
+        <li>Meg</li>
+        <li>Melodie</li>
+        <li>Mico</li>
+        <li>Mina</li>
+        <li>Moe</li>
+        <li>Mortis</li>
+        <li>Mr. P</li>
+        <li>Nani</li>
+        <li>Nita</li>
+        <li>Ollie</li>
+        <li>Otis</li>
+        <li>Pam</li>
+        <li>Pearl</li>
+        <li>Penny</li>
+        <li>Piper</li>
+        <li>Poco</li>
+        <li>R-T</li>
+        <li>Rico</li>
+        <li>Rosa</li>
+        <li>Ruffs</li>
+        <li>Sam</li>
+        <li>Sandy</li>
+        <li>Shade</li>
+        <li>Shelly</li>
+        <li>Spike</li>
+        <li>Sprout</li>
+        <li>Squeak</li>
+        <li>Stu</li>
+        <li>Surge</li>
+        <li>Tara</li>
+        <li>Tick</li>
+        <li>Trunk</li>
+        <li>Willow</li>
+        <li>Ziggy</li>
+      </ul>
+      <p>Se quiser, posso gerar uma lista **completa** atualizada automaticamente com os 96 nomes (utilizando uma API ou fonte confiável) para colocar no site.</p>
+    `;
+break;
+case "Como jogar com cada brawler":
+    contentArea.innerHTML = `
+        <h2>Como jogar com cada tipo de Brawler</h2>
+
+        <p>Todos os Brawlers têm estilos diferentes. Aqui estão as dicas gerais:</p>
+
+        <h3>🏹 Atiradores</h3>
+        <p>
+            Mantêm distância e acertam de longe. Foque em mira manual.
+        </p>
+
+        <h3>🛡️ Tanques</h3>
+        <p>
+            Têm muita vida e servem para avançar, tankar dano e abrir espaço.
+        </p>
+
+        <h3>⚡ Assassinos</h3>
+        <p>
+            Usam velocidade e burst para eliminar inimigos rapidamente.
+        </p>
+
+        <h3>💉 Curadores e suporte</h3>
+        <p>
+            Mantêm o time vivo e ajudam no controle de área.
+        </p>
+
+        <h3>🎯 Snipers</h3>
+        <p>
+            Têm muito dano à distância, mas precisam de mira precisa.
+        </p>
+    `;
+break;
+case "Quais são melhores para o meta?":
+    contentArea.innerHTML = `
+        <h2>Melhores Brawlers do Meta Atual</h2>
+
+        <p>
+            O meta muda constantemente, mas geralmente os Brawlers mais fortes são
+            aqueles que possuem:
+            <br>– Alto dano consistente;
+            <br>– Super útil e rápido;
+            <br>– Boa mobilidade;
+            <br>– Capacidade de controlar área.
+        </p>
+
+        <h3>⭐ Exemplos comuns de meta (podem mudar):</h3>
+        <p>
+            – Brawlers assassinos rápidos <br>
+            – Tanques com muito dano <br>
+            – Snipers com projéteis rápidos <br>
+            – Brawlers de controle com gadgets fortes
+        </p>
+    `;
+break;
+case "Melhorar jogando com amigos / estratégias":
+    contentArea.innerHTML = `
+        <h2>Melhorando com Amigos e Estratégias</h2>
+
+        <p>
+            Jogar com amigos aumenta muito a chance de vitória,
+            porque vocês podem se comunicar e montar estratégias.
+        </p>
+
+        <h3>🎧 Comunicação</h3>
+        <p>
+            Use áudio ou chat para combinar ataques, focar alvos e defender áreas importantes.
+        </p>
+
+        <h3>📌 Estratégias</h3>
+        <p>
+            – Utilize composições equilibradas (tank + dano + suporte) <br>
+            – Controle o centro do mapa <br>
+            – Evite se separar demais <br>
+            – Use paredes como proteção <br>
+            – Jogue baseado no seu Brawler
+        </p>
+
+        <h3>🎯 Treino</h3>
+        <p>
+            Quanto mais você joga com o mesmo grupo, melhor o entrosamento.
+        </p>
+    `;
+break;
+case "Como o jogo se tornou famoso":
+    contentArea.innerHTML = `
+        <h2>Como o Brawl Stars se tornou famoso</h2>
+
+        <p>
+            O Brawl Stars ficou famoso por causa da sua jogabilidade rápida,
+            divertida e acessível para todos os tipos de jogadores.
+        </p>
+
+        <h3>📈 Fatores que ajudaram no sucesso:</h3>
+        <p>
+            – Atualizações constantes<br>
+            – Variedade enorme de Brawlers<br>
+            – Partidas rápidas e dinâmicas<br>
+            – Visual colorido e carismático<br>
+            – Forte presença em redes sociais e YouTube<br>
+            – Grande apoio da comunidade
+        </p>
+    `;
+break;
+case "Como o jogo foi planejado":
+    contentArea.innerHTML = `
+        <h2>Como o Brawl Stars foi planejado</h2>
+
+        <p>
+            O jogo foi criado pela Supercell com a ideia de misturar ação rápida,
+            personagens únicos e modos variados.
+        </p>
+
+        <h3>🎨 Desenvolvimento</h3>
+        <p>
+            A equipe passou anos testando mecânicas, estudando mapas, habilidades
+            e o comportamento dos jogadores.
+        </p>
+
+        <h3>🧪 Testes e mudanças</h3>
+        <p>
+            O jogo foi lançado em beta por muito tempo, recebendo milhares de
+            ajustes até chegar no formato atual.
+        </p>
+
+        <h3>🏁 Lançamento global</h3>
+        <p>
+            Quando foi lançado mundialmente, já tinha base sólida e modos polidos,
+            o que contribuiu para o enorme sucesso.
+        </p>
+    `;
+break;
+
+
+        
+
+
+
+
+        
+        
+        
+        
+        default:
+            contentArea.innerHTML = `
+                <p>Conteúdo sobre: <strong>${title}</strong></p>
+            `;
+        break;
+    }
+}
+
+
+  function openExitModal() {
+    document.getElementById("exitModal").style.display = "flex";
+  }
+
+  function closeExitModal() {
+    document.getElementById("exitModal").style.display = "none";
+  }
+
+  function leaveSite() {
+    window.location.href = "about:blank";
+  }
+
+  loadMenu();
+</script>
+
+</body>
+</html>
