@@ -1,0 +1,138 @@
+#logo_brawl {
+  background-image: url("img.jpeg");
+  background-repeat: no-repeat;
+  background-position: center top; /* ou como quiser */
+  background-size: 200px; /* ajuste o tamanho da logo */
+  padding-top: 220px; /* empurra o conteúdo para baixo da imagem */
+}
+ 
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+     background: linear-gradient(135deg, #5b0e0e, #c50707d0, #252222);
+	
+      color: rgb(4, 4, 4);
+      text-size-adjust: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #111;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      border-right: 2px solid #222;
+    }
+
+
+    #titule{
+
+        text-size-adjust: 50px;
+        color: #d5cc1a
+;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #f7d300;
+    }
+
+    .sidebar input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .menu-item {
+      padding: 10px;
+      width: 100%;
+      background: #222;
+      border: none;
+      color: rgb(247, 243, 243);
+      cursor: pointer;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      text-align: left;
+      transition: 0.2s;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: #f7d300;
+      color: black;
+    }
+
+    .exit-btn {
+      background: #b30000;
+      padding: 10px;
+      color: rgb(44, 39, 39);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .content {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .brawler-card {
+      background: #1a1a1a;
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+
+    .modal-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-box {
+      background: #222;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .stay { background: #0a7c0a; color: #fff; }
+    .exit { background: #b30000; color: #fff; }
